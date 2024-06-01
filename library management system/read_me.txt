@@ -1,0 +1,1 @@
+this is a Software project which is developed using java Swing and MySQL. it is a software which developed to add and optimise users, add and edit attendance also admin can delete user and attendance too on this project. 
