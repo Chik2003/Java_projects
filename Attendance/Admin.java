@@ -1,9 +1,10 @@
+package Attendance;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
-import java.sql.Connection;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class Admin {
 
@@ -19,7 +20,7 @@ public class Admin {
         Font btn = new Font("TImes New Roman", Font.BOLD, 20);
 
         //-------------------Back-----------------------------------------||
-        JLabel back =  new JLabel("< BAck");
+        JLabel back = new JLabel("< BAck");
         back.setBackground(Color.decode("#37474F"));
         back.setFont(new Font("Times New Roman", Font.BOLD, 17));
         back.setBounds(18, 10, 100, 20);
@@ -40,13 +41,13 @@ public class Admin {
         //------------------------------------------------------------------||
 
         //-------------------------Table------------------------------------||
-        @SuppressWarnings("serial");
-        JTable table = new JTable(){
-            public boolean isCellEditable(int row, int coloumn){
+
+        JTable table = new JTable() {
+            public boolean isCellEditable(int row, int coloumn) {
                 return false;
             }
         };
-        model = (DefaultTableModel)table.getModel();
+        model = (DefaultTableModel) table.getModel();
         model.addColumn("ID");
         model.addColumn("USERNAME");
         model.addColumn(("NAME"));
@@ -90,7 +91,7 @@ public class Admin {
         //--------------------------------------------------------------------------||
 
         //---------------------------NAME-------------------------------------------||
-        JLabel nm  = new JLabel("NAME: ");
+        JLabel nm = new JLabel("NAME: ");
         nm.setFont(text);
         nm.setBounds(25, 350, 150, 20);
         nm.setForeground(Color.decode("#DEE4E7"));
@@ -119,7 +120,7 @@ public class Admin {
         //----------------------------------------------------------------------------||
 
         //----------------------------------SAVEABUTTON-------------------------------||
-        JButton save =  new JButton("SAVE");
+        JButton save = new JButton("SAVE");
         save.setBounds(25, 500, 125, 50);
         save.setFont(btn);
         save.setBackground(Color.decode("#DEE4E7"));
@@ -129,20 +130,22 @@ public class Admin {
         save.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(check == 1){
-                    try{
+                if (check == 1) {
+                    try {
                         adder(Integer.parseInt(idbox.getText()), username.getText(), name.getText(), password.getText());
-                    } catch(SQLException e1){
+                    } catch (SQLException e1) {
                         e1.printStackTrace();
                     }
                 } else if (check == 2) {
                     save.setEnabled(false);
-                    try{
-                        if (password.getText().equals(""));
-                        editor(Integer.parseInt(idbox.getText()), username.getText(), name.getText());
+                    try {
+                        if (password.getText().equals(""))
+                            editor(Integer.parseInt(idbox.getText()), username.getText(), name.getText());
+
                         else
                             editor(Integer.parseInt(idbox.getText()), username.getText(), name.getText(), password.getText());
-                    } catch(SQLException e1) {
+
+                        } catch (SQLException e1) {
                         e1.printStackTrace();
                     }
                 }
@@ -155,7 +158,7 @@ public class Admin {
                     password.setText("");
                     while (model.getRowCount() > 0)
                         model.removeRow(0);
-                        tblupdt();
+                    tblupdt();
                 } catch (SQLException e1) {
                     e1.printStackTrace();
                 }
@@ -183,7 +186,7 @@ public class Admin {
                 password.setEditable(true);
             }
         });
-    //-----------------------------------------------------------------------||
+        //-----------------------------------------------------------------------||
 
         //---------------------------ADDBUTTON-----------------------------||
         add = new JButton("ADD");
@@ -203,9 +206,9 @@ public class Admin {
                 name.setEditable(true);
                 password.setEditable(true);
                 check = 1;
-                try{
+                try {
                     idbox.setText(String.valueOf(getid()));
-                } catch(SQLException e1) {
+                } catch (SQLException e1) {
                     e1.printStackTrace();
                 }
             }
@@ -275,20 +278,65 @@ public class Admin {
         frame.getContentPane().setBackground(Color.decode("#37474F"));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //----------------------------------------------------------||
-
+    }
         public void tblupdt() {
             try{
-                ResultSet rs = dbSearch();
-                for (int i = 0; res.next; i++ ){
+                ResultSet res = dbSearch();
+                for (int i = 0; res.next(); i++ ){
                     model.addRow(new Object[0]);
                     model.setValueAt(res.getInt("id"), i, 0);
-                    model.setValueAt(res.getString("username", i, 1));
+                    model.setValueAt(res.getString("username"), i, 1);
                     model.setValueAt(res.getString("name"), i, 0);
                 }
             } catch(SQLException e1){
                 e1.printStackTrace();
             }
         }
+        
+        public ResultSet dbSearch() throws SQLException {
+            String str1 = "SELECT*FROM user WHERE prio = 1";
+            String url = "jdbc:mySQL://localhost:3306/attendance";
+            String user = "root";
+            String pass = "Chirayu@2003";
+            con = DriverManager.getConnection(url, user, pass);
+            Statement stm = con.createStatement();
+            ResultSet rst = stm.executeQuery(str1);
+            return rst;
+        }
+        public int getid() throws SQLException {
+        Statement stm = con.createStatement();
+        ResultSet rst = stm.executeQuery("SELECT MAX(id) from user");
+        if (rst.next()){
+            return rst.getInt("MAX(id")+1;
+        } else {
+            return 1;
+        }
         }
 
-}
+        public void adder(int id, String user, String name, String password) throws SQLException{
+            String adding = "insert into user VAlues("+id+","+user+","+name+", "+password+", 1)";
+            Statement stm = con.createStatement();
+            stm.executeUpdate(adding);
+        }
+
+        public void deleter(int id) throws SQLException{
+        String del = "DELETE FROM user WHERE id= "+id;
+        Statement stm = con.createStatement();
+        stm.executeUpdate(del);
+        }
+        
+        public void editor(int id, String username, String name, String password) throws SQLException{
+        String update = "UPDATE user SET username="+username+", "+name+", "+password+"WHERE id ="+id;
+        Statement stm = con.createStatement();
+        stm.executeUpdate(update);
+        }
+
+        public void editor(int id, String username, String name) throws SQLException{
+        String update = "UPDATE user SET username="+username+", "+name+" WHERE id = "+id;
+        Statement stm = con.createStatement();
+        stm.executeUpdate(update);
+        }
+
+        }
+
+

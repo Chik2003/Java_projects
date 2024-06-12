@@ -1,3 +1,5 @@
+package Attendance;
+
 import java.sql.SQLException;
 
 public class Main {

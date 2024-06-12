@@ -1,3 +1,5 @@
+package Attendance;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -37,7 +39,7 @@ public class Home {
             public void actionPerformed(ActionEvent e) {
                 Students std = new Students();
                 try {
-                    std.studentView();
+                    std.StudentView();
             } catch (SQLException e1) {
                     //TODO Auto-generated catch Block
                     e1.printStackTrace();
